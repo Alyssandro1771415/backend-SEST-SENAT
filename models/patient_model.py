@@ -10,10 +10,10 @@ class Patient(Document):
     sexo: str
     idade: int
     altura: int
-    peso: int
+    peso: Optional[float] = None
     imc: float
-    estado_civil: str
-    profissao: str
+    estado_civil: Optional[str] = None
+    profissao: Optional[str] = None
     cidade: str
     sigop: int
     unidade: str
@@ -38,7 +38,7 @@ class Patient(Document):
 
     calorias_med: Optional[float] = None
     distancia_med: Optional[float] = None
-    passos_med: Optional[int] = None
+    passos_med: Optional[float] = None
 
     sono_leve_pct: Optional[float] = None
     sono_rem_pct: Optional[float] = None

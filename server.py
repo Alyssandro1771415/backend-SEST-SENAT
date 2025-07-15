@@ -4,6 +4,8 @@ import os
 from dotenv import load_dotenv
 from db.mongo import init_db
 
+from routes.region_route import state_bp
+
 load_dotenv()
 
 app = sanic.Sanic("app")
@@ -16,7 +18,8 @@ async def setup_db(app, loop):
 async def index(request):
     return sanic.response.text("Server stating up...")
 
-
+# Blueprints da aplicação
+app.blueprint(state_bp)
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT_SERVER"))
