@@ -1,4 +1,6 @@
 from models.patient_model import Patient
+from beanie.operators import And
+
 
 async def get_region_datas(regiao: str):
     if regiao != "all":
@@ -7,6 +9,27 @@ async def get_region_datas(regiao: str):
         patients_region_data = await Patient.find_all().to_list()
 
     all_datas = [p.model_dump(exclude={"id"}) for p in patients_region_data]
+
+    return calc_all_average(all_datas)
+
+async def get_region_datas_with_filters(regiao: str, filters: dict):
+
+    query_parts = []
+
+    if regiao != "all":
+        query_parts.append(Patient.regiao == regiao)
+    if filters.get("unidade"):
+        query_parts.append(Patient.unidade == filters["unidade"][0])
+    if filters.get("idade"):
+        query_parts.append(Patient.faixa_etaria == filters["idade"][0])
+    if filters.get("genero"):
+        query_parts.append(Patient.sexo == filters["genero"][0])
+
+    query = And(*query_parts)
+
+    patients_filtered_datas = await Patient.find(query).to_list()
+
+    all_datas = [p.model_dump(exclude={"id"}) for p in patients_filtered_datas]
 
     return calc_all_average(all_datas)
 
