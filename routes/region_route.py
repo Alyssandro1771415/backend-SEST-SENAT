@@ -14,6 +14,7 @@ async def filter_regions(request: Request):
     """
 
     estado = request.args.get('estado')
+    estado = "all" if estado is None else estado
     
     datas = await get_region_datas(estado = str(estado))
 

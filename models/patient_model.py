@@ -9,12 +9,12 @@ class Patient(Document):
     nome: str
     sexo: str
     idade: int
-    altura: int
+    altura: float
     peso: Optional[float] = None
     imc: float
     estado_civil: Optional[str] = None
     profissao: Optional[str] = None
-    cidade: str
+    cidade: Optional[str] = None
     sigop: int
     unidade: str
     faixa_etaria: str
