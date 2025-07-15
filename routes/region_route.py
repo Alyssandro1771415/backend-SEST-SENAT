@@ -12,10 +12,9 @@ async def filter_regions(request: Request):
     """
     Endpoint to filter regions based on a query parameter.
     """
-
-    estado = request.args.get('estado')
-    estado = "all" if estado is None else estado
+    regiao = request.args.get('regiao')
+    regiao = "all" if regiao is None else regiao
     
-    datas = await get_region_datas(estado = str(estado))
+    datas = await get_region_datas(regiao = str(regiao))
 
     return sanic.response.json(datas, status=200)
