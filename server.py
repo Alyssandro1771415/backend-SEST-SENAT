@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from db.mongo import init_db
 
-from routes.region_route import state_bp
+from routes.health_report_route import state_bp
 
 load_dotenv()
 
