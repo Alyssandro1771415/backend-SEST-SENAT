@@ -16,7 +16,10 @@ class Patient(Document):
     profissao: Optional[str] = None
     cidade: Optional[str] = None
     sigop: int
-    unidade: str
+    modal: Optional[str] = None
+    conselho: Optional[str] = None
+    cnpj: Optional[int] = None
+    unidade: Optional[str] = None
     faixa_etaria: str
     estado: str
     regiao: str
