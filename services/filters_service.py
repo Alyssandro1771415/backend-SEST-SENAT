@@ -23,8 +23,8 @@ async def get_region_health_datas_filters(regiao: str, filters: dict):
             query_parts.append(Patient.modal == filters["modal"][0])
         if filters.get("cnpj"):
             query_parts.append(Patient.cnpj == str(filters["cnpj"][0]).zfill(14))
-        if filters.get("empresa"):
-            query_parts.append(Patient.nome_empresa == filters["empresa"][0])
+        if filters.get("nome_empresa"):
+            query_parts.append(Patient.nome_empresa == filters["nome_empresa"][0])
 
 
     if query_parts:
