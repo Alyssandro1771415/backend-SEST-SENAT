@@ -19,6 +19,7 @@ class Patient(Document):
     modal: Optional[str] = None
     conselho: Optional[str] = None
     cnpj: Optional[int] = None
+    nome_empresa: Optional[str] = None
     unidade: Optional[str] = None
     faixa_etaria: str
     estado: str
