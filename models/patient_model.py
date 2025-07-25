@@ -1,12 +1,11 @@
 from beanie import Document
-from pydantic import Field
 from typing import Optional
-from bson import ObjectId
 
 
 class Patient(Document):
     patient_id: str
     nome: str
+    ano: Optional[int] = None
     sexo: str
     idade: int
     altura: float
