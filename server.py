@@ -6,7 +6,8 @@ from db.mongo import init_db
 from sanic_cors import CORS
 from sanic_ext import Extend
 
-from routes.health_report_route import state_bp
+from routes.health_report_route import health_bp
+from routes.panoramic_analyse_route import consultation_analyses_bp
 
 load_dotenv()
 
@@ -25,9 +26,10 @@ async def index(request):
     return sanic.response.text("Server starting up...")
 
 # Blueprints da aplicação
-app.blueprint(state_bp)
+app.blueprint(health_bp)
+app.blueprint(consultation_analyses_bp)
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT_SERVER"))
     host = os.getenv("HOST")
-    app.run(host=host, port=port, debug=True, access_log=True)
+    app.run(host=host, port=port, debug=True, access_log=True, workers=1)

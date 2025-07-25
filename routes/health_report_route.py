@@ -6,9 +6,9 @@ from controllers.health_report_controller import calc_all_average
 from services.filters_service import get_region_health_datas_filters
 
 
-state_bp = Blueprint('region_filter')
+health_bp = Blueprint('health_bp')
 
-@state_bp.route('/health_report/<regiao>', methods=['GET'])
+@health_bp.route('/health_report/<regiao>', methods=['GET'])
 async def health_report(request: Request, regiao: str):
     """
     Endpoint to calculate datas based on the query parameters
