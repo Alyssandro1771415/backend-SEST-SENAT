@@ -1,42 +1,59 @@
-from models.patient_model import Patient
-from beanie.operators import And
+import pandas as pd
+import math
 
-def calc_media(valores: list):
+class HealthReportController:
 
-    for index, valor in enumerate(valores):
-        if valor is None:
-            valores[index] = 0
+    def __init__(self):
+        self.dataFrame = pd.read_csv("./db/Relatorio_de_saude.csv", sep="|", encoding="utf-8")
 
-    if not valores:
-        return 0
+    def get_datas_by_filters(self, filters: list):
+        if not filters:
+            return self.dataFrame.to_dict(orient="records")
 
-    return sum(valores) / len(valores)
+        filtered_data = self.dataFrame
 
-def calc_all_average(valores: list):
-    averages_datas = {
-        "mediaIMC": round(calc_media([p['imc'] for p in valores]), 2),
-        "percGordura": round(calc_media([p['percentual_gordura'] for p in valores]), 2),
-        "mme": round(calc_media([p['mme'] for p in valores]), 2),
-        "gorduraVisceral": round(calc_media([p['gordura_visceral'] for p in valores]), 2),
-        "rmssd": round(calc_media([p['rmssd'] for p in valores]), 2),
-        "pnni_50": round(calc_media([p['pnni_50'] for p in valores]), 2),
-        "sdnn": round(calc_media([p['sdnn'] for p in valores]), 2),
-        "minutos_atividades_diarios_media": round(calc_media([p['minutos_atividades_diarios_media'] for p in valores]), 2),
-        "passos_med": round(calc_media([p['passos_med'] for p in valores]), 2),
-        "minutos_diarios_atividades_intensa": round(calc_media([p['minutos_diarios_atividades_intensa'] for p in valores]), 2),
-        "minutos_diarios_atividades_moderada": round(calc_media([p['minutos_diarios_atividades_moderada'] for p in valores]), 2),
-        "eficiencia_sono": round(calc_media([p['eficiencia_sono'] for p in valores]), 2),
-        "duracao_sono_horas": round(calc_media([p['duracao_sono_minutos'] for p in valores]) / 60, 2),
-    }
+        for filter in filters:
+            for key, value in filter.items():
+                filtered_data = filtered_data[filtered_data[key] == value]
 
-    minutos_diarios_atividades_intensa_moderada = round(averages_datas["minutos_diarios_atividades_intensa"] + averages_datas["minutos_diarios_atividades_moderada"], 2)
+        return filtered_data.to_dict(orient="records")
 
-    averages_datas["minutos_diarios_atividades_intensa_moderada"] = minutos_diarios_atividades_intensa_moderada
+    def calc_media(self, valores: list):
+        # Filtra valores numéricos válidos (não None, não NaN)
+        valores_validos = [v for v in valores if isinstance(v, (int, float)) and not math.isnan(v)]
 
-    return averages_datas
+        if not valores_validos:
+            return 0
 
-def calc_avaliation_life_style():
-    return
+        return sum(valores_validos) / len(valores_validos)
 
-def calc_avaliation_health():
-    return
+    def calc_all_average(self, valores: list):
+        averages_datas = {
+            "mediaIMC": round(self.calc_media([p['imc'] for p in valores]), 2),
+            "percGordura": round(self.calc_media([p['percentual_gordura'] for p in valores]), 2),
+            "mme": round(self.calc_media([p['mme'] for p in valores]), 2),
+            "gorduraVisceral": round(self.calc_media([p['gordura_visceral'] for p in valores]), 2),
+            "rmssd": round(self.calc_media([p['rmssd'] for p in valores]), 2),
+            "pnni_50": round(self.calc_media([p['pnni_50'] for p in valores]), 2),
+            "sdnn": round(self.calc_media([p['sdnn'] for p in valores]), 2),
+            "minutos_atividades_diarios_media": round(self.calc_media([p['minutos_atividades_diarios_media'] for p in valores]), 2),
+            "passos_med": round(self.calc_media([p['passos_med'] for p in valores]), 2),
+            "minutos_diarios_atividades_intensa": round(self.calc_media([p['minutos_diarios_atividades_intensa'] for p in valores]), 2),
+            "minutos_diarios_atividades_moderada": round(self.calc_media([p['minutos_diarios_atividades_moderada'] for p in valores]), 2),
+            "eficiencia_sono": round(self.calc_media([p['eficiencia_sono'] for p in valores]), 2),
+            "duracao_sono_horas": round(self.calc_media([p['duracao_sono_minutos'] for p in valores]) / 60, 2),
+        }
+
+        minutos_diarios_atividades_intensa_moderada = round(
+            averages_datas["minutos_diarios_atividades_intensa"] +
+            averages_datas["minutos_diarios_atividades_moderada"], 2)
+
+        averages_datas["minutos_diarios_atividades_intensa_moderada"] = minutos_diarios_atividades_intensa_moderada
+
+        return averages_datas
+
+    def calc_avaliation_life_style():
+        return
+
+    def calc_avaliation_health():
+        return

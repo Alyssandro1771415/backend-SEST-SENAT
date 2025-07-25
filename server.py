@@ -2,7 +2,6 @@ import sanic
 import sanic.response
 import os
 from dotenv import load_dotenv
-from db.mongo import init_db
 from sanic_cors import CORS
 from sanic_ext import Extend
 
@@ -16,10 +15,6 @@ app.config.CORS_ORIGINS = os.getenv("FRONTEND_URL")
 Extend(app)
 
 CORS(app, resources={r"/*": {"origins": os.getenv("FRONTEND_URL")}}, automatic_options=True, supports_credentials=True)
-
-@app.listener("before_server_start")
-async def setup_db(app, loop):
-    await init_db()
 
 @app.route("/")
 async def index(request):
