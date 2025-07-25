@@ -3,7 +3,7 @@ import sanic.response
 from sanic import Blueprint
 from sanic.request import Request
 from controllers.health_report_controller import HealthReportController
-from services.filters_service import get_region_and_filters
+from services.filters_service import FiltersService
 
 
 health_bp = Blueprint('health_bp')
@@ -19,11 +19,9 @@ async def health_report(request: Request, regiao: str):
 
     regiao = "all" if regiao is None else regiao
 
-    filters = await get_region_and_filters(regiao, request.args)
+    filters = await FiltersService().get_region_and_filters_hearth_report(regiao, request.args)
 
     datas = controller.get_datas_by_filters(filters)
-
-    print(datas)
 
     finel_datas_result = controller.calc_all_average(datas)
     
