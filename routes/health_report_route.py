@@ -2,6 +2,7 @@ import sanic
 import sanic.response
 from sanic import Blueprint
 from sanic.request import Request
+
 from controllers.health_report_controller import HealthReportController
 from services.filters_service import FiltersService
 
@@ -14,7 +15,6 @@ async def health_report(request: Request, regiao: str):
     Endpoint to calculate datas based on the query parameters
     filters to get calculated datas to present in front-end.
     """
-
     controller = HealthReportController()
 
     regiao = "all" if regiao is None else regiao

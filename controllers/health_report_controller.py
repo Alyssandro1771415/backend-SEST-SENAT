@@ -2,9 +2,21 @@ import pandas as pd
 import math
 
 class HealthReportController:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(HealthReportController, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self):
+        if self._initialized:
+            return
+        print(f"\033[92mIniciando o controller de relatório de saúde\033[m")
         self.dataFrame = pd.read_csv("./db/Relatorio_de_saude.csv", sep="|", encoding="utf-8")
+        print(f"\033[92mDataFrame carregado com {self.dataFrame.shape[0]} linhas e {self.dataFrame.shape[1]} colunas\033[m")
+        HealthReportController._initialized = True
 
     def get_datas_by_filters(self, filters: list):
         if not filters:
