@@ -23,9 +23,29 @@ class GeneralPersonasController:
         """
         Return datas of national personas
         """
-        response = {"regional":self.dataFrame["nacional"].to_dict(orient="records"),
-                    "regional_doencas":self.dataFrame["nacional_doencas"].to_dict(orient="records"),
-                    "regional_ocupacional":self.dataFrame["nacional_ocupacional"].to_dict(orient="records")}
+        database_nacional = self.dataFrame["nacional"].to_dict(orient="records")
+
+        database_nacional = {"Masculino": self.dataFrame["nacional"].to_dict(orient="records")[0],
+                             "Feminino": self.dataFrame["nacional"].to_dict(orient="records")[1]}
+        
+        database_nacional_doencas = {"Masculino": self.dataFrame["nacional_doencas"].to_dict(orient="records")[1],
+                                     "Feminino": self.dataFrame["nacional_doencas"].to_dict(orient="records")[0]}
+        
+        database_nacional_ocupacional = {"Masculino": self.dataFrame["nacional_ocupacional"].to_dict(orient="records")[1],
+                                         "Feminino": self.dataFrame["nacional_ocupacional"].to_dict(orient="records")[0]}
+
+        response = {"Image_Masculino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Masculino"]["Nome"]}.jpg',
+                   "Image_Feminino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Feminino"]["Nome"]}.jpg',
+                   "Masculino": [
+                       database_nacional["Masculino"],
+                       database_nacional_doencas["Masculino"],
+                       database_nacional_ocupacional["Masculino"]
+                   ],
+                   "Feminino": [
+                       database_nacional["Feminino"],
+                       database_nacional_doencas["Feminino"],
+                       database_nacional_ocupacional["Feminino"]
+                   ]}
         
         return response
     
@@ -52,14 +72,14 @@ class GeneralPersonasController:
             "Image_Masculino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_regional["Masculino"][0]["Nome"]}.jpg',
             "Image_Feminino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_regional["Feminino"][0]["Nome"]}.jpg',
             "Masculino": [
-                database_regional["Masculino"],
-                database_regional_doencas["Masculino"],
-                database_regional_ocupacional["Masculino"]
+                database_regional["Masculino"][0],
+                database_regional_doencas["Masculino"][1],
+                database_regional_ocupacional["Masculino"][1]
             ],
             "Feminino": [
-                database_regional["Feminino"],
-                database_regional_doencas["Feminino"],
-                database_regional_ocupacional["Feminino"]
+                database_regional["Feminino"][1],
+                database_regional_doencas["Feminino"][0],
+                database_regional_ocupacional["Feminino"][0]
             ]
         }
 
