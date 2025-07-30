@@ -17,11 +17,11 @@ class GeneralPersonasController:
     def __init__(self):
         if self._initialized:
             return
-        print(f"\033[92mIniciando o controller de relatório de saúde\033[m")
+        print(f"\033[91mIniciando o controller de personas\033[m")
         self.dataFrame = pd.read_excel("./db/Perfis_SEST_SENAT_2025.xlsx", sheet_name=["nacional", "regional",
                                                                                        "nacional_doencas", "regional_doencas",
                                                                                        "nacional_ocupacional", "regional_ocupacional",])
-        print(f"\033[92mDataFrame carregado com {len(self.dataFrame)} tabelas de personas\033[m")
+        print(f"\033[91mDataFrame carregado com {len(self.dataFrame)} tabelas de personas\033[m")
         GeneralPersonasController._initialized = True
 
     def get_datas_personas_nacional(self):
