@@ -187,7 +187,7 @@ class PanoramicAnalysesController:
             cnpj = filter.get('cnpj')
             nome_empresa = filter.get('nome_empresa')
             unidade = filter.get('unidade')
-            ano = filter.get('ano')
+            ano = filter.get('ano_atendimento')
 
         if genero:
             mask &= (df['Genero'] == genero)
