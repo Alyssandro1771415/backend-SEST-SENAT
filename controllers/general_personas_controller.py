@@ -1,8 +1,13 @@
 import pandas as pd
 import os
+
+from services.formatation_service import FormatationService
+
 class GeneralPersonasController:
     _instance = None
     _initialized = False
+    formatter = FormatationService()
+
 
     def __new__(cls):
         if cls._instance is None:
@@ -47,6 +52,9 @@ class GeneralPersonasController:
                        database_nacional_ocupacional["Feminino"]
                    ]}
         
+        for genero in ["Masculino", "Feminino"]:
+            response[genero] = [self.formatter.format_keys(d) for d in response[genero]]
+
         return response
     
     def get_datas_personas_regional(self, regiao: str):
@@ -82,5 +90,8 @@ class GeneralPersonasController:
                 database_regional_ocupacional["Feminino"][0]
             ]
         }
+        # Formata as chaves internas dos dicionários de cada gênero
+        for genero in ["Masculino", "Feminino"]:
+            response[genero] = [self.formatter.format_keys(d) for d in response[genero]]
 
         return response
