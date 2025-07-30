@@ -14,6 +14,8 @@ from controllers.general_personas_controller import GeneralPersonasController
 from controllers.health_report_controller import HealthReportController
 from controllers.panoramic_analyses_controller import PanoramicAnalysesController
 
+from services.cache_service import CacheService
+
 load_dotenv()
 
 app = sanic.Sanic("app")
@@ -37,6 +39,12 @@ async def preload_controllers(app, loop):
     GeneralPersonasController()
     HealthReportController()
     PanoramicAnalysesController()
+
+@app.listener('before_server_start')
+async def setup_cache(app, loop):
+    constroller_instance = PanoramicAnalysesController()
+    cache_service = CacheService(constroller_instance)
+    cache_service.starter_set()
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT_SERVER"))
