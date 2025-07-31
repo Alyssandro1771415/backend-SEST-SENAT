@@ -18,14 +18,19 @@ class CacheService:
             self.cache_path = "./cache/cache_data.json"
             self.PanoramicAnalysesController = None
 
-            if os.path.exists(self.cache_path):
-                try:
-                    with open(self.cache_path, "r") as file:
-                        content = file.read().strip()
-                        if content:
-                            self.cache = json.loads(content)
-                except json.JSONDecodeError:
-                    print("[WARN] Cache corrompido. Reiniciando com cache vazio.")
+            os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)
+
+            if not os.path.exists(self.cache_path):
+                with open(self.cache_path, "w", encoding="utf-8") as file:
+                    json.dump({}, file, indent=2, ensure_ascii=False)
+
+            try:
+                with open(self.cache_path, "r", encoding="utf-8") as file:
+                    content = file.read().strip()
+                    if content:
+                        self.cache = json.loads(content)
+            except json.JSONDecodeError:
+                print("[WARN] Cache corrompido. Reiniciando com cache vazio.")
 
             self.__class__._initialized = True
 
