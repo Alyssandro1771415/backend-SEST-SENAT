@@ -83,8 +83,6 @@ class CacheService:
 
         for item in regiao_genero:
 
-            print(item)
-
             key = self.generate_key([item])
 
             if self.get(key) is None:
@@ -95,8 +93,6 @@ class CacheService:
                     self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_ano:
-
-            print(item)
 
             key = self.generate_key([item])
 
