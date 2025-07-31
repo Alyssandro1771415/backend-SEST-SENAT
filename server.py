@@ -43,7 +43,8 @@ async def preload_controllers(app, loop):
 @app.listener('before_server_start')
 async def setup_cache(app, loop):
     constroller_instance = PanoramicAnalysesController()
-    cache_service = CacheService(constroller_instance)
+    cache_service = CacheService()
+    cache_service.set_controller(constroller_instance)
     cache_service.starter_set()
 
 if __name__ == "__main__":

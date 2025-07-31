@@ -4,19 +4,38 @@ from itertools import product
 import os
 
 class CacheService:
-    def __init__(self, PanoramicAnalysesController):
-        self.cache = {}
-        self.PanoramicAnalysesController = PanoramicAnalysesController
-        self.cache_path = "./cache/cache_data.json"
+    _instance = None
+    _initialized = False
 
-        if os.path.exists(self.cache_path):
-            try:
-                with open(self.cache_path, "r") as file:
-                    content = file.read().strip()
-                    if content:
-                        self.cache = json.loads(content)
-            except json.JSONDecodeError:
-                print("[WARN] Cache corrompido. Reiniciando com cache vazio.")
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not self.__class__._initialized:
+            self.cache = {}
+            self.cache_path = "./cache/cache_data.json"
+            self.PanoramicAnalysesController = None
+
+            if os.path.exists(self.cache_path):
+                try:
+                    with open(self.cache_path, "r") as file:
+                        content = file.read().strip()
+                        if content:
+                            self.cache = json.loads(content)
+                except json.JSONDecodeError:
+                    print("[WARN] Cache corrompido. Reiniciando com cache vazio.")
+
+            self.__class__._initialized = True
+
+    def set_controller(self, controller):
+        self.PanoramicAnalysesController = controller
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
     def get(self, key):
         try:
@@ -24,20 +43,24 @@ class CacheService:
         except KeyError:
             return None
     
-    def set(self, filtros: dict):
-        key = "_".join(str(filtros[k]) for k in sorted(filtros))
+    def generate_key(self, filtros: list[dict]) -> str:
+        filtros_processados = [
+            {k: v for k, v in filtro.items() if not (k == "regiao" and v == "all")}
+            for filtro in filtros
+        ]
 
+        key_parts = []
+        for f in filtros_processados:
+            for k in sorted(f):
+                key_parts.append(f"{k}={f[k]}")
+        return "|".join(key_parts)
+
+    def set(self, key: str, data_response: dict):
         if self.get(key) is not None:
             return
+        self.cache[key] = data_response
 
-        filtros_completos = filtros
-        if filtros.get("regiao") == "all":
-            filtros_completos = {k: v for k, v in filtros.items() if k != "regiao"}
-
-        resultado = self.PanoramicAnalysesController.painel_atendimentos([filtros_completos])
-        self.cache[key] = resultado
-
-        with open(self.cache_path, "w") as file:
+        with open(self.cache_path, "w", encoding="utf-8") as file:
             json.dump(self.cache, file, indent=2, ensure_ascii=False)
     
     def starter_set(self):
@@ -50,11 +73,14 @@ class CacheService:
 
         regiao_genero = [{"regiao": r, "genero": s} for r, s in product(regiao, sexo)]
         regiao_ano = [{"regiao": r, "ano": a} for r, a in product(regiao, ano_atendimento)]
-
+    
         self.cache["all"] = self.PanoramicAnalysesController.painel_atendimentos([{}])
 
         for item in regiao_genero:
-            key = f"{item['regiao']}_{item['genero']}"
+
+            print(item)
+
+            key = self.generate_key([item])
 
             if self.get(key) is None:
                 if item["regiao"] == "all":
@@ -64,7 +90,10 @@ class CacheService:
                     self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_ano:
-            key = f"{item['regiao']}_{item['ano']}"
+
+            print(item)
+
+            key = self.generate_key([item])
 
             if self.get(key) is None:
                 if item["regiao"] == "all":

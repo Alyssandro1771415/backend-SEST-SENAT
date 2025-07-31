@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from services.cache_service import CacheService
+
 class PanoramicAnalysesController:
     _instance = None
     _initialized = False
@@ -158,7 +160,14 @@ class PanoramicAnalysesController:
             return 0, 0.0
 
     def painel_atendimentos(self, filters: list) -> dict:
-        
+
+        cache_service = CacheService()
+
+        cache_key = "all" if cache_service.generate_key(filters) == "" else cache_service.generate_key(filters)
+
+        if (cached := cache_service.get(cache_key)) is not None:
+            return cached
+
         df = self.dataFrame.copy()
         
         # Aplica filtros uma única vez (otimização crítica)
@@ -336,5 +345,7 @@ class PanoramicAnalysesController:
             }
             }
         }
+
+        cache_service.set(cache_key, response)
 
         return response
