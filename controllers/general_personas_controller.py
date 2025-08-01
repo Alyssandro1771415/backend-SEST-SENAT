@@ -59,39 +59,49 @@ class GeneralPersonasController:
     
     def get_datas_personas_regional(self, regiao: str):
         """
-        Return datas of regional personas based on the region provided
+        Return datas of regional personas based on the region provided.
+        Caso a região seja 'Centro-Oeste', os dados femininos não são retornados.
         """
-        database_regional = {
-            "Masculino": self.dataFrame["regional"][self.dataFrame["regional"]["Regiao"] == regiao.upper()].to_dict(orient="records"),
-            "Feminino": self.dataFrame["regional"][self.dataFrame["regional"]["Regiao"] == regiao.upper()].to_dict(orient="records")
-        }
+        regiao_upper = regiao.upper()
 
-        database_regional_doencas = {
-            "Masculino": self.dataFrame["regional_doencas"][self.dataFrame["regional_doencas"]["Regiao"] == regiao].to_dict(orient="records"),
-            "Feminino": self.dataFrame["regional_doencas"][self.dataFrame["regional_doencas"]["Regiao"] == regiao].to_dict(orient="records")
-        }
+        df_regional = self.dataFrame["regional"]
+        df_doencas = self.dataFrame["regional_doencas"]
+        df_ocupacional = self.dataFrame["regional_ocupacional"]
 
-        database_regional_ocupacional = {
-            "Masculino": self.dataFrame["regional_ocupacional"][self.dataFrame["regional_ocupacional"]["Regiao"] == regiao].to_dict(orient="records"),
-            "Feminino": self.dataFrame["regional_ocupacional"][self.dataFrame["regional_ocupacional"]["Regiao"] == regiao].to_dict(orient="records")
-        }
+        regional_data = df_regional[df_regional["Regiao"] == regiao_upper].to_dict(orient="records")
+        doencas_data = df_doencas[df_doencas["Regiao"] == regiao].to_dict(orient="records")
+        ocupacional_data = df_ocupacional[df_ocupacional["Regiao"] == regiao].to_dict(orient="records")
 
-        response = {
-            "Image_Masculino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_regional["Masculino"][0]["Nome"]}.jpg',
-            "Image_Feminino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_regional["Feminino"][0]["Nome"]}.jpg',
-            "Masculino": [
-                database_regional["Masculino"][0],
-                database_regional_doencas["Masculino"][1],
-                database_regional_ocupacional["Masculino"][1]
-            ],
-            "Feminino": [
-                database_regional["Feminino"][1],
-                database_regional_doencas["Feminino"][0],
-                database_regional_ocupacional["Feminino"][0]
+        print(ocupacional_data)
+
+        response = {}
+
+        response["Image_Masculino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[0]["Nome"]}.jpg' \
+            if "Masculino" in regional_data[0].get("Nome", "") else \
+            f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[1]["Nome"]}.jpg'
+
+        masculino_index = 0 if "Masculino" in regional_data[0].get("Nome", "") else 1
+
+        if regiao_upper != "CENTRO-OESTE":
+            response["Masculino"] = [
+                self.formatter.format_keys(regional_data[masculino_index]),
+                self.formatter.format_keys(doencas_data[1]) if len(doencas_data) > 1 else {},
+                self.formatter.format_keys(ocupacional_data[1]) if len(ocupacional_data) > 1 else {},
             ]
-        }
-        # Formata as chaves internas dos dicionários de cada gênero
-        for genero in ["Masculino", "Feminino"]:
-            response[genero] = [self.formatter.format_keys(d) for d in response[genero]]
+        else:
+            response["Masculino"] = [
+                self.formatter.format_keys(regional_data[masculino_index]),
+                self.formatter.format_keys(doencas_data[1]) if len(doencas_data) > 1 else {},
+                self.formatter.format_keys(ocupacional_data[1]) if len(ocupacional_data) > 1 else self.formatter.format_keys(ocupacional_data[0]),
+            ]
+
+        if regiao_upper != "CENTRO-OESTE":
+            feminino_index = 1 - masculino_index
+            response["Image_Feminino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[feminino_index]["Nome"]}.jpg'
+            response["Feminino"] = [
+                self.formatter.format_keys(regional_data[feminino_index]),
+                self.formatter.format_keys(doencas_data[0]) if len(doencas_data) > 0 else {},
+                self.formatter.format_keys(ocupacional_data[0]) if len(ocupacional_data) > 0 else {},
+            ]
 
         return response
