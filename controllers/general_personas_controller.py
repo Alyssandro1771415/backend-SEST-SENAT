@@ -38,8 +38,8 @@ class GeneralPersonasController:
         database_nacional_ocupacional = {"Masculino": self.dataFrame["nacional_ocupacional"].to_dict(orient="records")[1],
                                          "Feminino": self.dataFrame["nacional_ocupacional"].to_dict(orient="records")[0]}
 
-        response = {"Image_Masculino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Masculino"]["Nome"]}.jpg',
-                   "Image_Feminino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Feminino"]["Nome"]}.jpg',
+        response = {"Image_Masculino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Masculino"]["Nome"]}.png',
+                   "Image_Feminino": f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{database_nacional["Feminino"]["Nome"]}.png',
                    "Masculino": [
                        database_nacional["Masculino"],
                        database_nacional_doencas["Masculino"],
@@ -75,9 +75,9 @@ class GeneralPersonasController:
 
         response = {}
 
-        response["Image_Masculino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[0]["Nome"]}.jpg' \
+        response["Image_Masculino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[0]["Nome"]}.png' \
             if "Masculino" in regional_data[0].get("Nome", "") else \
-            f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[1]["Nome"]}.jpg'
+            f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[1]["Nome"]}.png'
 
         masculino_index = 0 if "Masculino" in regional_data[0].get("Nome", "") else 1
 
@@ -96,7 +96,7 @@ class GeneralPersonasController:
 
         if regiao_upper != "CENTRO-OESTE":
             feminino_index = 1 - masculino_index
-            response["Image_Feminino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[feminino_index]["Nome"]}.jpg'
+            response["Image_Feminino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[feminino_index]["Nome"]}.png'
             response["Feminino"] = [
                 self.formatter.format_keys(regional_data[feminino_index]),
                 self.formatter.format_keys(doencas_data[0]) if len(doencas_data) > 0 else {},
