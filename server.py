@@ -8,10 +8,12 @@ from sanic.worker.manager import WorkerManager
 
 from routes.general_personas import personas_bp
 from routes.health_report_route import health_bp
+from routes.lifestyle_quality import lifestyle_quality_bp
 from routes.panoramic_analyse_route import consultation_analyses_bp
 
 from controllers.general_personas_controller import GeneralPersonasController
 from controllers.health_report_controller import HealthReportController
+from controllers.lifestyle_quality_controller import LifestyleQualityController
 from controllers.panoramic_analyses_controller import PanoramicAnalysesController
 
 from services.cache_service import CacheService
@@ -32,12 +34,14 @@ async def index(request):
 # Blueprints of the application
 app.blueprint(personas_bp)
 app.blueprint(health_bp)
+app.blueprint(lifestyle_quality_bp)
 app.blueprint(consultation_analyses_bp)
 
 @app.listener('before_server_start')
 async def preload_controllers(app, loop):
     GeneralPersonasController()
     HealthReportController()
+    LifestyleQualityController()
     PanoramicAnalysesController()
 
 @app.listener('before_server_start')

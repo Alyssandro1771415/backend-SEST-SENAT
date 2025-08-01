@@ -8,7 +8,6 @@ class GeneralPersonasController:
     _initialized = False
     formatter = FormatationService()
 
-
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(GeneralPersonasController, cls).__new__(cls)
