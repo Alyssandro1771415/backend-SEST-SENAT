@@ -186,7 +186,7 @@ class PanoramicAnalysesController:
         ano = None
 
         for filter in filters:
-            genero = filter.get('sexo')
+            genero = filter.get('genero')
             faixa_etaria = filter.get('faixa_etaria')
             modal = filter.get('modal')
             regiao = filter.get('regiao')
@@ -196,7 +196,7 @@ class PanoramicAnalysesController:
             cnpj = filter.get('cnpj')
             nome_empresa = filter.get('nome_empresa')
             unidade = filter.get('unidade')
-            ano = filter.get('ano_atendimento')
+            ano = filter.get('ano')
 
         if genero:
             mask &= (df['Genero'] == genero)
@@ -218,6 +218,8 @@ class PanoramicAnalysesController:
             mask &= (df['Nome_Empresa'] == nome_empresa)
         if unidade:
             mask &= (df['Unidade_Atendimento'] == unidade)
+        if ano:
+            mask &= (df['Ano_Atendimento'] == ano)
 
         # Aplica todos os filtros de uma vez
         df_filtrado = df[mask] if any([genero, faixa_etaria, modal, regiao, estado,
