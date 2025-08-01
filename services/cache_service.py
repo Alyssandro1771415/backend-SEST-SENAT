@@ -76,10 +76,21 @@ class CacheService:
         sexo = ["Masculino", "Feminino"]
         ano_atendimento = [2023, 2024, 2025]
 
+        regioes = [{"regiao": r} for r in regiao]
         regiao_genero = [{"regiao": r, "genero": s} for r, s in product(regiao, sexo)]
         regiao_ano = [{"regiao": r, "ano": a} for r, a in product(regiao, ano_atendimento)]
     
         self.cache["all"] = self.PanoramicAnalysesController.painel_atendimentos([{}])
+
+        for item in regioes:
+
+            key = self.generate_key([item])
+
+            if self.get(key) is None:
+                if item["regiao"] == "all":
+                    pass
+                else:
+                    self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_genero:
 
