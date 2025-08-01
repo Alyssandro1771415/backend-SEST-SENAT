@@ -24,6 +24,9 @@ app = sanic.Sanic("app")
 app.config.CORS_ORIGINS = os.getenv("FRONTEND_URL")
 Extend(app)
 
+image_folder_path = os.path.join(os.getcwd(), "db", "PERSONAS")
+app.static("/db/PERSONAS", image_folder_path)
+
 CORS(app, resources={r"/*": {"origins": os.getenv("FRONTEND_URL")}}, automatic_options=True, supports_credentials=True)
 WorkerManager.THRESHOLD = 10000
 
