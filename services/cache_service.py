@@ -38,11 +38,6 @@ class CacheService:
     def set_controller(self, controller):
         self.PanoramicAnalysesController = controller
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
     def get(self, key):
         try:
             return self.cache[key]
@@ -55,6 +50,11 @@ class CacheService:
                     c for c in unicodedata.normalize('NFKD', texto)
                     if not unicodedata.combining(c)
                 )
+            
+            filtros_ordenados = sorted(filtros, key=lambda d: list(d.keys())[0]) if len(filtros) > 1 else filtros
+
+            print(filtros)
+            print(filtros_ordenados, "\n\n\n")
 
             filtros_processados = [
                 {
@@ -80,7 +80,6 @@ class CacheService:
             json.dump(self.cache, file, indent=2, ensure_ascii=False)
     
     def starter_set(self):
-
         print("\033[93m[INFO] Iniciando cache...\033[0m")
 
         regiao = ["all", "Nordeste", "Norte", "Centro-Oeste", "Sudeste", "Sul"]
@@ -88,49 +87,45 @@ class CacheService:
         ano_atendimento = [2023, 2024, 2025]
 
         regioes = [{"Regiao": r} for r in regiao]
-        regiao_genero = [{"Regiao": r, "Genero": s} for r, s in product(regiao, sexo)]
-        regiao_ano = [{"Regiao": r, "ano": a} for r, a in product(regiao, ano_atendimento)]
-    
+
+        regiao_genero = [[{"Regiao": r}, {"Genero": s}] for r, s in product(regiao, sexo)]
+        regiao_ano = [[{"Regiao": r}, {"ano": a}] for r, a in product(regiao, ano_atendimento)]
+
         self.cache["all"] = self.PanoramicAnalysesController.painel_atendimentos([{}])
 
         for item in regioes:
-
             key = self.generate_key([item])
-
             if self.get(key) is None:
-                if item["Regiao"] == "all":
-                    pass
-                else:
+                if item["Regiao"] != "all":
                     self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_genero:
-            original_item = item.copy()  # salvar para referência da Regiao e Genero
+            regiao_dict = item[0]
+            genero_dict = item[1]
 
-            if item["Regiao"] == "all":
-                filtros = [{"Genero": item["Genero"]}]
+            if regiao_dict["Regiao"] == "all":
+                filtros = [genero_dict]
             else:
-                filtros = [item]
+                filtros = [regiao_dict, genero_dict]
 
             key = self.generate_key(filtros)
-
             if self.get(key) is None:
                 self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(filtros)
 
         for item in regiao_ano:
-            original_item = item.copy()
+            regiao_dict = item[0]
+            ano_dict = item[1]
 
-            if item["Regiao"] == "all":
-                filtros = [{"ano": item["ano"]}]
+            if regiao_dict["Regiao"] == "all":
+                filtros = [ano_dict]
             else:
-                filtros = [item]
+                filtros = [regiao_dict, ano_dict]
 
             key = self.generate_key(filtros)
-
             if self.get(key) is None:
                 self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(filtros)
 
-
-        with open(self.cache_path, "w") as file:
+        with open(self.cache_path, "w", encoding="utf-8") as file:
             json.dump(self.cache, file, indent=2, ensure_ascii=False)
 
         print("\033[92m[INFO] Cache iniciado com sucesso!\033[0m")
