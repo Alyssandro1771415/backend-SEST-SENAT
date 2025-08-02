@@ -1,7 +1,8 @@
-import json
-import pandas as pd
 from itertools import product
+import json
 import os
+import pandas as pd
+import unicodedata
 
 class CacheService:
     _instance = None
@@ -49,16 +50,26 @@ class CacheService:
             return None
     
     def generate_key(self, filtros: list[dict]) -> str:
-        filtros_processados = [
-            {k: v for k, v in filtro.items() if not (k == "regiao" and v == "all")}
-            for filtro in filtros
-        ]
+            def remover_acentos(texto: str) -> str:
+                return ''.join(
+                    c for c in unicodedata.normalize('NFKD', texto)
+                    if not unicodedata.combining(c)
+                )
 
-        key_parts = []
-        for f in filtros_processados:
-            for k in sorted(f):
-                key_parts.append(f"{k}={f[k]}")
-        return "|".join(key_parts)
+            filtros_processados = [
+                {
+                    remover_acentos(k.lower()): v
+                    for k, v in filtro.items()
+                    if not (remover_acentos(k.lower()) == "Regiao" and v == "all")
+                }
+                for filtro in filtros
+            ]
+
+            key_parts = []
+            for f in filtros_processados:
+                for k in sorted(f):
+                    key_parts.append(f"{k}={f[k]}")
+            return "|".join(key_parts)
 
     def set(self, key: str, data_response: dict):
         if self.get(key) is not None:
@@ -76,9 +87,9 @@ class CacheService:
         sexo = ["Masculino", "Feminino"]
         ano_atendimento = [2023, 2024, 2025]
 
-        regioes = [{"regiao": r} for r in regiao]
-        regiao_genero = [{"regiao": r, "genero": s} for r, s in product(regiao, sexo)]
-        regiao_ano = [{"regiao": r, "ano": a} for r, a in product(regiao, ano_atendimento)]
+        regioes = [{"Regiao": r} for r in regiao]
+        regiao_genero = [{"Regiao": r, "Genero": s} for r, s in product(regiao, sexo)]
+        regiao_ano = [{"Regiao": r, "ano": a} for r, a in product(regiao, ano_atendimento)]
     
         self.cache["all"] = self.PanoramicAnalysesController.painel_atendimentos([{}])
 
@@ -87,32 +98,37 @@ class CacheService:
             key = self.generate_key([item])
 
             if self.get(key) is None:
-                if item["regiao"] == "all":
+                if item["Regiao"] == "all":
                     pass
                 else:
                     self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_genero:
+            original_item = item.copy()  # salvar para referência da Regiao e Genero
 
-            key = self.generate_key([item])
+            if item["Regiao"] == "all":
+                filtros = [{"Genero": item["Genero"]}]
+            else:
+                filtros = [item]
+
+            key = self.generate_key(filtros)
 
             if self.get(key) is None:
-                if item["regiao"] == "all":
-                    item = [{"genero": item["genero"]}]
-                    self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(item)
-                else:
-                    self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
+                self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(filtros)
 
         for item in regiao_ano:
+            original_item = item.copy()
 
-            key = self.generate_key([item])
+            if item["Regiao"] == "all":
+                filtros = [{"ano": item["ano"]}]
+            else:
+                filtros = [item]
+
+            key = self.generate_key(filtros)
 
             if self.get(key) is None:
-                if item["regiao"] == "all":
-                    item = [{"ano": item["ano"]}]
-                    self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(item)
-                else:
-                    self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
+                self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos(filtros)
+
 
         with open(self.cache_path, "w") as file:
             json.dump(self.cache, file, indent=2, ensure_ascii=False)

@@ -186,16 +186,16 @@ class PanoramicAnalysesController:
         ano = None
 
         for filter in filters:
-            genero = filter.get('genero')
-            faixa_etaria = filter.get('faixa_etaria')
-            modal = filter.get('modal')
-            regiao = filter.get('regiao')
-            estado = filter.get('estado')
-            municipio = filter.get('municipio')
-            conselho = filter.get('conselho')
-            cnpj = filter.get('cnpj')
-            nome_empresa = filter.get('nome_empresa')
-            unidade = filter.get('unidade')
+            genero = filter.get('Genero')
+            faixa_etaria = filter.get('FaixaEtaria')
+            modal = filter.get('Modal')
+            regiao = filter.get('Regiao')
+            estado = filter.get('UF')
+            municipio = filter.get('Municipio')
+            conselho = filter.get('ConselhoRegional')
+            cnpj = filter.get('CNPJ')
+            nome_empresa = filter.get('NomeEmpresa')
+            unidade = filter.get('UnidadeAtendimento')
             ano = filter.get('ano')
 
         if genero:

@@ -22,7 +22,7 @@ class LifestyleQualityController:
         """
         Method to get the lifestyle quality data based on region and filters.
         """
-        if regiao:
+        if regiao != "all":
             df = self.dataFrame[self.dataFrame['regiao'] == regiao]
         else:
             df = self.dataFrame

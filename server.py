@@ -22,6 +22,7 @@ load_dotenv()
 
 app = sanic.Sanic("app")
 app.config.CORS_ORIGINS = os.getenv("FRONTEND_URL")
+app.config.KEEP_ALIVE_TIMEOUT = 30
 Extend(app)
 
 image_folder_path = os.path.join(os.getcwd(), "db", "PERSONAS")
@@ -57,6 +58,5 @@ async def setup_cache(app, loop):
 if __name__ == "__main__":
     port = int(os.getenv("PORT_SERVER"))
     host = os.getenv("HOST")
-    fast = True
-    workers = 1
+    workers = 2
     app.run(host=host, port=port, debug=True, access_log=True, workers=workers)

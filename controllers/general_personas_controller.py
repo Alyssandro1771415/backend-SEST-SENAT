@@ -71,8 +71,6 @@ class GeneralPersonasController:
         doencas_data = df_doencas[df_doencas["Regiao"] == regiao].to_dict(orient="records")
         ocupacional_data = df_ocupacional[df_ocupacional["Regiao"] == regiao].to_dict(orient="records")
 
-        print(ocupacional_data)
-
         response = {}
 
         response["Image_Masculino"] = f'{os.getenv("BACKEND_URL")}/db/PERSONAS/{regional_data[0]["Nome"]}.png' \
