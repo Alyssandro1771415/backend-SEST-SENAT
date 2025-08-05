@@ -58,5 +58,5 @@ async def setup_cache(app, loop):
 if __name__ == "__main__":
     port = int(os.getenv("PORT_SERVER"))
     host = os.getenv("HOST")
-    workers = 2
+    workers = 1
     app.run(host=host, port=port, debug=True, access_log=True, workers=workers)

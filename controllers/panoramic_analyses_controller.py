@@ -186,17 +186,28 @@ class PanoramicAnalysesController:
         ano = None
 
         for filter in filters:
-            genero = filter.get('Genero')
-            faixa_etaria = filter.get('FaixaEtaria')
-            modal = filter.get('Modal')
-            regiao = filter.get('Regiao')
-            estado = filter.get('UF')
-            municipio = filter.get('Municipio')
-            conselho = filter.get('ConselhoRegional')
-            cnpj = filter.get('CNPJ')
-            nome_empresa = filter.get('NomeEmpresa')
-            unidade = filter.get('UnidadeAtendimento')
-            ano = filter.get('ano')
+            if filter.get('Genero') != None:
+                genero = filter.get('Genero')
+            if filter.get('FaixaEtaria') != None:
+                faixa_etaria = filter.get('FaixaEtaria')
+            if filter.get('Modal') != None:
+                modal = filter.get('Modal')
+            if filter.get('Regiao') != None:
+                regiao = filter.get('Regiao')
+            if filter.get('UF') != None:
+                estado = filter.get('UF')
+            if filter.get('Municipio') != None:
+                municipio = filter.get('Municipio')
+            if filter.get('ConselhoRegional') != None:
+                conselho = filter.get('ConselhoRegional')
+            if filter.get('CNPJ') != None:
+                cnpj = filter.get('CNPJ')
+            if filter.get('NomeEmpresa') != None:
+                nome_empresa = filter.get('NomeEmpresa')
+            if filter.get('UnidadeAtendimento') != None:
+                unidade = filter.get('UnidadeAtendimento')
+            if filter.get('ano') != None:
+                ano = filter.get('ano')
 
         if genero:
             mask &= (df['Genero'] == genero)

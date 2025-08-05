@@ -53,9 +53,6 @@ class CacheService:
             
             filtros_ordenados = sorted(filtros, key=lambda d: list(d.keys())[0]) if len(filtros) > 1 else filtros
 
-            print(filtros)
-            print(filtros_ordenados, "\n\n\n")
-
             filtros_processados = [
                 {
                     remover_acentos(k.lower()): v
