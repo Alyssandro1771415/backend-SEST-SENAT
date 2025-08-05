@@ -192,8 +192,8 @@ class PanoramicAnalysesController:
                 faixa_etaria = filter.get('FaixaEtaria')
             if filter.get('Modal') != None:
                 modal = filter.get('Modal')
-            if filter.get('Regiao') != None:
-                regiao = filter.get('Regiao')
+            if filter.get('Região') != None:
+                regiao = filter.get('Região')
             if filter.get('UF') != None:
                 estado = filter.get('UF')
             if filter.get('Municipio') != None:
