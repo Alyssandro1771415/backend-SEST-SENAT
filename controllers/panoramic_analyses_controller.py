@@ -206,8 +206,8 @@ class PanoramicAnalysesController:
                 nome_empresa = filter.get('NomeEmpresa')
             if filter.get('UnidadeAtendimento') != None:
                 unidade = filter.get('UnidadeAtendimento')
-            if filter.get('ano') != None:
-                ano = filter.get('ano')
+            if filter.get('Ano') != None:
+                ano = int(filter.get('Ano'))
 
         if genero:
             mask &= (df['Genero'] == genero)
