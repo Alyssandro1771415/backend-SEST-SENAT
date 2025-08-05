@@ -83,24 +83,24 @@ class CacheService:
         sexo = ["Masculino", "Feminino"]
         ano_atendimento = [2023, 2024, 2025]
 
-        regioes = [{"Regiao": r} for r in regiao]
+        regioes = [{"Região": r} for r in regiao]
 
-        regiao_genero = [[{"Regiao": r}, {"Genero": s}] for r, s in product(regiao, sexo)]
-        regiao_ano = [[{"Regiao": r}, {"ano": a}] for r, a in product(regiao, ano_atendimento)]
+        regiao_genero = [[{"Região": r}, {"Genero": s}] for r, s in product(regiao, sexo)]
+        regiao_ano = [[{"Região": r}, {"ano": a}] for r, a in product(regiao, ano_atendimento)]
 
         self.cache["all"] = self.PanoramicAnalysesController.painel_atendimentos([{}])
 
         for item in regioes:
             key = self.generate_key([item])
             if self.get(key) is None:
-                if item["Regiao"] != "all":
+                if item["Região"] != "all":
                     self.cache[key] = self.PanoramicAnalysesController.painel_atendimentos([item])
 
         for item in regiao_genero:
             regiao_dict = item[0]
             genero_dict = item[1]
 
-            if regiao_dict["Regiao"] == "all":
+            if regiao_dict["Região"] == "all":
                 filtros = [genero_dict]
             else:
                 filtros = [regiao_dict, genero_dict]
@@ -113,7 +113,7 @@ class CacheService:
             regiao_dict = item[0]
             ano_dict = item[1]
 
-            if regiao_dict["Regiao"] == "all":
+            if regiao_dict["Região"] == "all":
                 filtros = [ano_dict]
             else:
                 filtros = [regiao_dict, ano_dict]
