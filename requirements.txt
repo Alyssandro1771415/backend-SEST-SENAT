@@ -9,7 +9,10 @@ httptools==0.6.4
 lazy-model==0.2.0
 motor==3.7.1
 multidict==6.6.3
+numpy==1.26.4
+openpyxl==3.1.2
 packaging==25.0
+pandas==2.2.2
 pydantic==2.11.7
 pydantic_core==2.33.2
 pymongo==4.13.2

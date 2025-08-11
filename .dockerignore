@@ -1,0 +1,45 @@
+# Ambiente virtual
+venv/
+.venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Cache da aplicação (será criado no container)
+cache/
+
+# Arquivos de desenvolvimento
+.git/
+.gitignore
+README.md
+.env.example
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dados de teste (manter apenas os necessários)
+datas/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

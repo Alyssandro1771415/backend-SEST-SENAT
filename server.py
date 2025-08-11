@@ -56,7 +56,30 @@ async def setup_cache(app, loop):
     cache_service.starter_set()
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT_SERVER"))
-    host = os.getenv("HOST")
-    workers = 1
-    app.run(host=host, port=port, debug=True, access_log=True, workers=workers)
+    port = int(os.getenv("PORT_SERVER", 5000))
+    host = os.getenv("HOST", "0.0.0.0")
+    workers = int(os.getenv("WORKERS", 1))
+
+    # Configurações para produção vs desenvolvimento
+    is_production = os.getenv("ENVIRONMENT", "development").lower() == "production"
+
+    if is_production:
+        # Configurações de produção
+        app.run(
+            host=host,
+            port=port,
+            debug=False,
+            access_log=False,
+            workers=workers,
+            auto_reload=False
+        )
+    else:
+        # Configurações de desenvolvimento
+        app.run(
+            host=host,
+            port=port,
+            debug=True,
+            access_log=True,
+            workers=workers,
+            auto_reload=True
+        )
