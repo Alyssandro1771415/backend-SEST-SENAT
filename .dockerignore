@@ -18,7 +18,8 @@ __pycache__/
 *.log
 
 # Cache da aplicação (será criado no container)
-cache/
+cache/*
+!cache/.gitkeep
 
 # Arquivos de desenvolvimento
 .git/
