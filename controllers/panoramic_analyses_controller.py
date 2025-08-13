@@ -19,19 +19,44 @@ class PanoramicAnalysesController:
 
             file_path = "./db/Atendimentos_SEST_SENAT.csv"
 
+            # Lista de colunas a remover (conforme a imagem)
+            colunas_remover = [
+                "GrauInstrucao",
+                "EstadoCivil",
+                "Renda",
+                "Idade",
+                "Classificacao_Transporte_ou_Comunidade",
+                "Categoria_Dependente_ou_Titular_da_Classificação",
+                "Bairro",
+                "Cidade",
+                "Ocupação",
+                "CEP_da_Unidade",
+                "CodigoIBGE_UnidadeOperacional",
+                "Código Município Completo"
+            ]
+
+            # Ler cabeçalho para identificar as colunas que vamos manter
+            with open(file_path, encoding="utf-8") as f:
+                todas_colunas = f.readline().strip().split("|")
+
+            colunas_manter = [c for c in todas_colunas if c not in colunas_remover]
+
             # Contar linhas (descontando header)
             total_rows = sum(1 for _ in open(file_path, encoding="utf-8")) - 1
 
-            # Ler em chunks e mostrar progresso
+            # Ler em chunks somente com colunas desejadas
             chunks = []
-            for chunk in tqdm(pd.read_csv(file_path, sep="|", encoding="utf-8", chunksize=50_000),
-                              total=(total_rows // 50_000) + 1,
-                              desc="Carregando CSV"):
+            for chunk in tqdm(
+                pd.read_csv(file_path, sep="|", encoding="utf-8", usecols=colunas_manter, chunksize=50_000),
+                total=(total_rows // 50_000) + 1,
+                desc="Carregando CSV"
+            ):
                 chunks.append(chunk)
 
             self.dataFrame = pd.concat(chunks, ignore_index=True)
 
             print(f"\033[94mDataFrame carregado com {self.dataFrame.shape[0]} linhas e {self.dataFrame.shape[1]} colunas\033[m")
+
 
             # Ajustes no CNPJ
             self.dataFrame['CNPJ'] = self.dataFrame['CNPJ'].astype(str).str.zfill(14)
