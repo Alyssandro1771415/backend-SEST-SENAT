@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from services.cache_service import CacheService
 
@@ -15,9 +16,24 @@ class PanoramicAnalysesController:
     def __init__(self):
         if not self.__class__._initialized:
             print(f"\033[94mIniciando o controller de análises panorâmicas\033[m")
-            self.dataFrame = pd.read_csv("./db/Atendimentos_SEST_SENAT.csv", sep="|", encoding="utf-8")
+
+            file_path = "./db/Atendimentos_SEST_SENAT.csv"
+
+            # Contar linhas (descontando header)
+            total_rows = sum(1 for _ in open(file_path, encoding="utf-8")) - 1
+
+            # Ler em chunks e mostrar progresso
+            chunks = []
+            for chunk in tqdm(pd.read_csv(file_path, sep="|", encoding="utf-8", chunksize=50_000),
+                              total=(total_rows // 50_000) + 1,
+                              desc="Carregando CSV"):
+                chunks.append(chunk)
+
+            self.dataFrame = pd.concat(chunks, ignore_index=True)
+
             print(f"\033[94mDataFrame carregado com {self.dataFrame.shape[0]} linhas e {self.dataFrame.shape[1]} colunas\033[m")
 
+            # Ajustes no CNPJ
             self.dataFrame['CNPJ'] = self.dataFrame['CNPJ'].astype(str).str.zfill(14)
             self.dataFrame['CNPJ'] = self.dataFrame['CNPJ'].str.replace('.0', '', regex=False)
             self.dataFrame['CNPJ'] = self.dataFrame['CNPJ'].astype(str).str.zfill(14)
