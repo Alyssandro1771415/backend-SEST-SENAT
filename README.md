@@ -291,3 +291,8 @@ O sistema exibe logs coloridos para facilitar o debug:
 - 🟣 Roxo: Controller de qualidade de vida
 - 🔵 Azul: Controller de análises panorâmicas
 - 🟡 Amarelo: Sistema de cache
+
+
+## Observações
+
+projeto teve continuidade posterior e alterações, essas foram realizadas no repositório da organização do projeto do SEST SENAT e não está disponível para público.
