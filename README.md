@@ -295,4 +295,4 @@ O sistema exibe logs coloridos para facilitar o debug:
 
 ## Observações
 
-projeto teve continuidade posterior e alterações, essas foram realizadas no repositório da organização do projeto do SEST SENAT e não está disponível para público.
+O projeto teve continuidade posterior e alterações, essas foram realizadas no repositório da organização do projeto do SEST SENAT e não está disponível para público.
